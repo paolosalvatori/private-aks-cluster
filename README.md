@@ -49,3 +49,21 @@ The following picture shows the resources deployed by the ARM template in the MC
 If you open an ssh session to the Linux virtual machine and manually run the nslookup command using the FQND of the API server as a parameter, you should see an output like the the following:
 
 ![Architecture](images/nslookup.png)
+
+In order to connect the AKS cluster, you can run th following Bash script on the Jumpbox virtual machine:
+
+```bash
+#!/bin/bash
+name="<name of the AKS cluster>"
+resourceGroup="<name of the AKS resource group>"
+
+# Install Azure CLI on Ubuntu
+curl -sL https://aka.ms/InstallAzureCLIDeb | sudo bash
+
+# Install Kubectl
+az aks install-cli
+
+# Use the following command to configure kubectl to connect to the new Kubernetes cluster
+echo "Getting access credentials configure kubectl to connect to the ["$aksName"] AKS cluster..."
+az aks get-credentials --name $name --resource-group $resourceGroup
+```
