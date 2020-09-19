@@ -3,20 +3,20 @@
 # Variables
 
 # AKS cluster name
-aksName="LeoAks"
+aksName="<AKS cluster name>"
 
 # ARM template and parameters file
-template="azuredeploy.json"
-parameters="azuredeploy.parameters.json"
+template="../templates/azuredeploy.json"
+parameters="../templates/azuredeploy.parameters.json"
 
 # Name and location of the resource group for the Azure Kubernetes Service (AKS) cluster
-aksResourceGroup="LeoAksRG"
-location="WestEurope"
+aksResourceGroup="<AKS resource group name>"
+location="<Region>"
 
 # Name and resource group name of the Azure Container Registry used by the AKS cluster.
 # The name of the cluster is also used to create or select an existing admin group in the Azure AD tenant.
-acrName="PaoloSalvatori"
-acrResourceGroup="ContainerRegistryResourceGroup"
+acrName="<ACR name>"
+acrResourceGroup="<ACR resource group name>"
 acrSku="Basic"
 
 # SubscriptionId and tenantId of the current subscription
