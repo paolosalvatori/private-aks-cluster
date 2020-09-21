@@ -60,6 +60,9 @@ resourceGroup="<name of the AKS resource group>"
 # Install Azure CLI on Ubuntu
 curl -sL https://aka.ms/InstallAzureCLIDeb | sudo bash
 
+# Login with your Azure account
+az login
+
 # Install Kubectl
 az aks install-cli
 
