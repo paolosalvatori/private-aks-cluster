@@ -121,7 +121,7 @@ if [[ $? != 0 ]]; then
 
     # Validate the ARM template
     echo "Validating ["$template"] ARM template..."
-    az group deployment validate \
+    az deployment group validate \
     --resource-group $aksResourceGroup \
     --only-show-errors \
     --template-file $template \
