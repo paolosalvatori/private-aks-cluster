@@ -23,16 +23,16 @@ The following picture shows the architecture and network topology of the sample.
 
 The ARM template deploys:
 
-- A new virtual network with two subnets, one for the AKS cluster and one for a Jumpbox VM
-- An AKS cluster with a private endpoint to the control plane / API server hosted by an AKS-managed Azure subscription. The cluster can communicate with the API server exposed via a Private Link Service using a private endpoint. The deployment of an AKS private cluster also creates:
-
-  - A Private Endpoint in the same subnet of the AKS cluster.
-  - A Network Interface associated to the private endpoint.
-  - A Private DNS Zone for the name resolution of the private endpoint.
-  - Two A records in the Private DNS Zone to let the cluster resolve the FQDN of the AKS cluster to the private IP address of its control plane.
-  - A Virtual Network Link between the virtual network hosting the cluster and the Private DNS Zone to let the cluster to use the CNAME and A records defined by the Private DNS Zone for the name resolution of the API server of the cluster.
-- A Jumpbox VM
-- Log Analytics to collect the diagnostics logs and metrics of both the AKS cluster and Jumpbox VM
+- A new virtual network with three subnets, one for the AKS cluster, one for Azure Bastion and one for a Jumpbox virtual machine used to connect to the private AKS cluster
+- An AKS cluster with a private endpoint to the control plane / API server hosted by an AKS-managed Azure subscription. The cluster can communicate with the API server exposed via a Private Link Service using a private endpoint. 
+- An Azure Bastion resource that provides secure and seamless SSH connectivity to the Jumpbox virtual machine directly in the Azure portal over SSL
+- A Private Endpoint in the same subnet of the AKS cluster.
+- A Network Interface associated to the private endpoint.
+- A Private DNS Zone for the name resolution of the private endpoint.
+- Two A records in the Private DNS Zone to let the cluster resolve the FQDN of the AKS cluster to the private IP address of its control plane.
+- A Virtual Network Link between the virtual network hosting the cluster and the Private DNS Zone to let the cluster to use the CNAME and A records defined by the Private DNS Zone for the name resolution of the API server of the cluster.
+- A Jumpbox virtual machine to manage the private AKS cluster
+- A Log Analytics workspace to collect the diagnostics logs and metrics of both the AKS cluster and Jumpbox virtual machine
 
 ## Deployment ##
 

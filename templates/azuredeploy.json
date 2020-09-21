@@ -469,20 +469,32 @@
       "metadata": {
         "description": "Specifies the name of the private link to the boot diagnostics storage account."
       }
+    },
+    "bastionSubnetAddressPrefix": {
+      "type": "string",
+      "defaultValue": "10.1.1.0/26",
+      "metadata": {
+        "description": "Specifies the Bastion subnet IP prefix. This prefix must be within vnet IP prefix address space."
+      }
+    },
+    "bastionHostName": {
+      "type": "string",
+      "defaultValue": "[concat(parameters('aksClusterName'), 'Bastion')]",
+      "metadata": {
+        "description": "Specifies the name of the Azure Bastion resource."
+      }
     }
   },
   "variables": {
-    "nsgName": "[concat(parameters('vmSubnetName'), 'Nsg')]",
-    "nsgId": "[resourceId('Microsoft.Network/networkSecurityGroups',variables('nsgName'))]",
+    "vmSubnetNsgName": "[concat(parameters('vmSubnetName'), 'Nsg')]",
+    "vmSubnetNsgId": "[resourceId('Microsoft.Network/networkSecurityGroups',variables('vmSubnetNsgName'))]",
+    "bastionSubnetNsgName": "[concat(parameters('bastionHostName'),'Nsg')]",
+    "bastionSubnetNsgId": "[resourceId('Microsoft.Network/networkSecurityGroups',variables('bastionSubnetNsgName'))]",
     "vnetId": "[resourceId('Microsoft.Network/virtualNetworks', parameters('virtualNetworkName'))]",
     "vmSubnetId": "[resourceId('Microsoft.Network/virtualNetworks/subnets', parameters('virtualNetworkName'), parameters('vmSubnetName'))]",
     "aksSubnetId": "[resourceId('Microsoft.Network/virtualNetworks/subnets', parameters('virtualNetworkName'), parameters('aksSubnetName'))]",
-    "workspaceId": "[resourceId('Microsoft.OperationalInsights/workspaces/', parameters('logAnalyticsWorkspaceName'))]",
-    "nicName": "[concat(parameters('vmName'), 'Nic')]",
-    "nicId": "[resourceId('Microsoft.Network/networkInterfaces', variables('nicName'))]",
-    "publicIPAddressName": "[concat(parameters('vmName'), 'PublicIp')]",
-    "publicIPAddressType": "Dynamic",
-    "publicIpId": "[resourceId('Microsoft.Network/publicIPAddresses', variables('publicIPAddressName'))]",
+    "vmNicName": "[concat(parameters('vmName'), 'Nic')]",
+    "vmNicId": "[resourceId('Microsoft.Network/networkInterfaces', variables('vmNicName'))]",
     "blobStorageAccountId": "[resourceId('Microsoft.Storage/storageAccounts', parameters('blobStorageAccountName'))]",
     "blobPublicDNSZoneForwarder": "[concat('.blob.', environment().suffixes.storage)]",
     "blobPrivateDnsZoneName": "[concat('privatelink', variables('blobPublicDNSZoneForwarder'))]",
@@ -505,9 +517,132 @@
         ]
       },
       "provisionVMAgent": true
-    }
+    },
+    "bastionPublicIpAddressName": "[concat(parameters('bastionHostName'),'PublicIp')]",
+    "bastionPublicIpAddressId": "[resourceId('Microsoft.Network/publicIPAddresses', variables('bastionPublicIpAddressName'))]",
+    "bastionSubnetName": "AzureBastionSubnet",
+    "bastionSubnetId": "[resourceId('Microsoft.Network/virtualNetworks/subnets', parameters('virtualNetworkName'), variables('bastionSubnetName'))]",
+    "workspaceId": "[resourceId('Microsoft.OperationalInsights/workspaces/', parameters('logAnalyticsWorkspaceName'))]"
   },
   "resources": [
+    {
+      "apiVersion": "2020-05-01",
+      "type": "Microsoft.Network/publicIPAddresses",
+      "name": "[variables('bastionPublicIpAddressName')]",
+      "location": "[parameters('location')]",
+      "sku": {
+        "name": "Standard"
+      },
+      "properties": {
+        "publicIPAllocationMethod": "Static"
+      }
+    },
+    {
+      "apiVersion": "2020-05-01",
+      "type": "Microsoft.Network/networkSecurityGroups",
+      "name": "[variables('bastionSubnetNsgName')]",
+      "location": "[parameters('location')]",
+      "properties": {
+        "securityRules": [
+          {
+            "name": "bastionInAllow",
+            "properties": {
+              "protocol": "Tcp",
+              "sourcePortRange": "*",
+              "sourceAddressPrefix": "Internet",
+              "destinationPortRange": "443",
+              "destinationAddressPrefix": "*",
+              "access": "Allow",
+              "priority": 100,
+              "direction": "Inbound"
+            }
+          },
+          {
+            "name": "bastionControlInAllow",
+            "properties": {
+              "protocol": "Tcp",
+              "sourcePortRange": "*",
+              "sourceAddressPrefix": "GatewayManager",
+              "destinationPortRanges": [
+                "443",
+                "4443"
+              ],
+              "destinationAddressPrefix": "*",
+              "access": "Allow",
+              "priority": 120,
+              "direction": "Inbound"
+            }
+          },
+          {
+            "name": "bastionInDeny",
+            "properties": {
+              "protocol": "*",
+              "sourcePortRange": "*",
+              "destinationPortRange": "*",
+              "sourceAddressPrefix": "*",
+              "destinationAddressPrefix": "*",
+              "access": "Deny",
+              "priority": 900,
+              "direction": "Inbound"
+            }
+          },
+          {
+            "name": "bastionVnetOutAllow",
+            "properties": {
+              "protocol": "Tcp",
+              "sourcePortRange": "*",
+              "sourceAddressPrefix": "*",
+              "destinationPortRanges": [
+                "22",
+                "3389"
+              ],
+              "destinationAddressPrefix": "VirtualNetwork",
+              "access": "Allow",
+              "priority": 100,
+              "direction": "Outbound"
+            }
+          },
+          {
+            "name": "bastionAzureOutAllow",
+            "properties": {
+              "protocol": "Tcp",
+              "sourcePortRange": "*",
+              "sourceAddressPrefix": "*",
+              "destinationPortRange": "443",
+              "destinationAddressPrefix": "AzureCloud",
+              "access": "Allow",
+              "priority": 120,
+              "direction": "Outbound"
+            }
+          }
+        ]
+      }
+    },
+    {
+      "apiVersion": "2020-05-01",
+      "type": "Microsoft.Network/bastionHosts",
+      "name": "[parameters('bastionHostName')]",
+      "location": "[parameters('location')]",
+      "dependsOn": [
+        "[variables('bastionPublicIpAddressId')]",
+        "[variables('vnetId')]"
+      ],
+      "properties": {
+        "ipConfigurations": [
+          {
+            "name": "IpConf",
+            "properties": {
+              "subnet": {
+                "id": "[variables('bastionSubnetId')]"
+              },
+              "publicIPAddress": {
+                "id": "[variables('bastionPublicIpAddressId')]"
+              }
+            }
+          }
+        ]
+      }
+    },
     {
       "apiVersion": "2019-06-01",
       "type": "Microsoft.Storage/storageAccounts",
@@ -520,23 +655,10 @@
     },
     {
       "apiVersion": "2020-04-01",
-      "type": "Microsoft.Network/publicIPAddresses",
-      "name": "[variables('publicIPAddressName')]",
-      "location": "[parameters('location')]",
-      "properties": {
-        "publicIPAllocationMethod": "[variables('publicIPAddressType')]",
-        "dnsSettings": {
-          "domainNameLabel": "[concat(toLower(parameters('vmName')), uniquestring(resourceGroup().id))]"
-        }
-      }
-    },
-    {
-      "apiVersion": "2020-04-01",
       "type": "Microsoft.Network/networkInterfaces",
-      "name": "[variables('nicName')]",
+      "name": "[variables('vmNicName')]",
       "location": "[parameters('location')]",
       "dependsOn": [
-        "[variables('publicIpId')]",
         "[variables('vnetId')]"
       ],
       "properties": {
@@ -545,9 +667,6 @@
             "name": "ipconfig1",
             "properties": {
               "privateIPAllocationMethod": "Dynamic",
-              "publicIPAddress": {
-                "id": "[resourceId('Microsoft.Network/publicIPAddresses',variables('publicIPAddressName'))]"
-              },
               "subnet": {
                 "id": "[variables('vmSubnetId')]"
               }
@@ -562,7 +681,7 @@
       "name": "[parameters('vmName')]",
       "location": "[parameters('location')]",
       "dependsOn": [
-        "[variables('nicId')]"
+        "[variables('vmNicId')]"
       ],
       "properties": {
         "hardwareProfile": {
@@ -610,7 +729,7 @@
         "networkProfile": {
           "networkInterfaces": [
             {
-              "id": "[resourceId('Microsoft.Network/networkInterfaces',variables('nicName'))]"
+              "id": "[resourceId('Microsoft.Network/networkInterfaces',variables('vmNicName'))]"
             }
           ]
         },
@@ -662,9 +781,9 @@
       }
     },
     {
-      "apiVersion": "2019-08-01",
+      "apiVersion": "2020-05-01",
       "type": "Microsoft.Network/networkSecurityGroups",
-      "name": "[variables('nsgName')]",
+      "name": "[variables('vmSubnetNsgName')]",
       "location": "[parameters('location')]",
       "properties": {
         "securityRules": [
@@ -689,6 +808,9 @@
       "apiVersion": "2020-05-01",
       "name": "[parameters('virtualNetworkName')]",
       "location": "[parameters('location')]",
+      "dependsOn": [
+        "[variables('bastionSubnetNsgId')]"
+      ],
       "properties": {
         "addressSpace": {
           "addressPrefixes": [
@@ -712,10 +834,19 @@
             "properties": {
               "addressPrefix": "[parameters('vmSubnetAddressPrefix')]",
               "networkSecurityGroup": {
-                "id": "[variables('nsgId')]"
+                "id": "[variables('vmSubnetNsgId')]"
               },
               "privateEndpointNetworkPolicies": "Disabled",
               "privateLinkServiceNetworkPolicies": "Enabled"
+            }
+          },
+          {
+            "name": "[variables('bastionSubnetName')]",
+            "properties": {
+              "addressPrefix": "[parameters('bastionSubnetAddressPrefix')]",
+              "networkSecurityGroup": {
+                "id": "[variables('bastionSubnetNsgId')]"
+              }
             }
           }
         ],

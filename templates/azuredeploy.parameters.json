@@ -61,6 +61,12 @@
     "aksSubnetAddressPrefix": {
       "value": "10.0.0.0/16"
     },
+    "bastionSubnetAddressPrefix": {
+      "value": "10.1.1.0/26"
+    },
+    "vmSubnetAddressPrefix": {
+      "value": "10.1.0.0/24"
+    },
     "logAnalyticsSku": {
       "value": "PerGB2018"
     },
