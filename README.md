@@ -33,7 +33,7 @@ The ARM template deploys:
 - An AKS cluster with a private endpoint to the control plane / API server hosted by an AKS-managed Azure subscription. The cluster can communicate with the API server exposed via a Private Link Service using a private endpoint.
 - An Azure Bastion resource that provides secure and seamless SSH connectivity to the Jumpbox virtual machine directly in the Azure portal over SSL
 - An Azure Container Registry (ACR) to build, store, and manage container images and artifacts in a private registry for all types of container deployments.
-- When the ACR sku is equal to Premium, a Private Endpoint is created to allow the AKS private cluster to access ACR via a private IP address.
+- When the ACR sku is equal to Premium, a Private Endpoint is created to allow the AKS private cluster to access ACR via a private IP address. For more information, see [Connect privately to an Azure container registry using Azure Private Link](https://docs.microsoft.com/en-us/azure/container-registry/container-registry-private-link).
 - A Private Endpoint in the same subnet of the AKS cluster.
 - A Network Interface associated to the private endpoint.
 - A Private DNS Zone for the name resolution of the private endpoint.
