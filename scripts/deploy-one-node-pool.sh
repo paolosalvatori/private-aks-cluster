@@ -6,8 +6,8 @@
 aksName="<AKS cluster name>"
 
 # ARM template and parameters file
-template="../templates/azuredeploy.json"
-parameters="../templates/azuredeploy.parameters.json"
+template="../templates/one-node-pool/azuredeploy.json"
+parameters="../templates/one-node-pool/azuredeploy.parameters.json"
 
 # Name and location of the resource group for the Azure Kubernetes Service (AKS) cluster
 aksResourceGroup="<AKS resource group name>"
