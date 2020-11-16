@@ -3,7 +3,7 @@ services: aks, app-service, container-registry, azure-monitor, storage, virtual-
 author: paolosalvatori
 ---
 
-# Create a AKS private cluster #
+# Create an AKS private cluster #
 
 This ARM template includes all the latest features like [AKS private clusters](https://docs.microsoft.com/en-us/azure/aks/private-clusters), new simplified [AKS-managed AAD integration](https://docs.microsoft.com/en-us/azure/aks/managed-aad), the brand new [Azure RBAC for Kubernetes Authorization](https://docs.microsoft.com/en-us/azure/aks/manage-azure-rbac), actually in preview, and the use of [managed identity in place of a service principal](https://docs.microsoft.com/en-us/azure/aks/use-managed-identity), and more. 
 
