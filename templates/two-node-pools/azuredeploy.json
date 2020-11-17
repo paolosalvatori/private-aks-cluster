@@ -1567,6 +1567,60 @@
         "enabled": true,
         "description": "All azure advisor alerts"
       }
+    },
+    {
+      "type": "Microsoft.Network/networkSecurityGroups/providers/diagnosticSettings",
+      "apiVersion": "2017-05-01-preview",
+      "name": "[concat(variables('vmSubnetNsgName'), '/', 'Microsoft.Insights/diagnosticSettings')]",
+      "location": "[parameters('location')]",
+      "dependsOn": [
+        "[variables('vmSubnetNsgId')]"
+      ],
+      "properties": {
+        "workspaceId": "[variables('workspaceId')]",
+        "metrics": [],
+        "logs": [
+          {
+            "category": "NetworkSecurityGroupEvent",
+            "enabled": true,
+            "retentionPolicy": {
+              "enabled": false,
+              "days": 0
+            }
+          },
+          {
+            "category": "NetworkSecurityGroupRuleCounter",
+            "enabled": true,
+            "retentionPolicy": {
+              "enabled": false,
+              "days": 0
+            }
+          }
+        ]
+      }
+    },
+    {
+      "type": "Microsoft.Network/networkSecurityGroups/providers/diagnosticSettings",
+      "apiVersion": "2017-05-01-preview",
+      "name": "[concat(variables('bastionSubnetNsgName'), '/', 'Microsoft.Insights/diagnosticSettings')]",
+      "location": "[parameters('location')]",
+      "dependsOn": [
+        "[variables('bastionSubnetNsgId')]"
+      ],
+      "properties": {
+        "workspaceId": "[variables('workspaceId')]",
+        "metrics": [],
+        "logs": [
+          {
+            "category": "NetworkSecurityGroupEvent",
+            "enabled": true
+          },
+          {
+            "category": "NetworkSecurityGroupRuleCounter",
+            "enabled": true
+          }
+        ]
+      }
     }
   ]
 }
