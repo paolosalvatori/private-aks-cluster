@@ -952,7 +952,7 @@
       }
     },
     {
-      "apiVersion": "2019-12-01",
+      "apiVersion": "2020-06-01",
       "type": "Microsoft.Compute/virtualMachines",
       "name": "[parameters('vmName')]",
       "location": "[parameters('location')]",
@@ -1018,7 +1018,7 @@
       }
     },
     {
-      "apiVersion": "2019-12-01",
+      "apiVersion": "2020-06-01",
       "type": "Microsoft.Compute/virtualMachines/extensions",
       "name": "[concat(parameters('vmName'),'/', variables('omsAgentForLinuxName'))]",
       "location": "[parameters('location')]",
@@ -1040,7 +1040,7 @@
       }
     },
     {
-      "apiVersion": "2019-12-01",
+      "apiVersion": "2020-06-01",
       "type": "Microsoft.Compute/virtualMachines/extensions",
       "name": "[concat(parameters('vmName'),'/', variables('omsDependencyAgentForLinuxName'))]",
       "location": "[parameters('location')]",
@@ -1325,7 +1325,7 @@
     },
     {
       "type": "Microsoft.OperationalInsights/workspaces",
-      "apiVersion": "2015-11-01-preview",
+      "apiVersion": "2020-08-01",
       "name": "[parameters('logAnalyticsWorkspaceName')]",
       "location": "[parameters('location')]",
       "properties": {
@@ -1333,41 +1333,6 @@
           "name": "[parameters('logAnalyticsSku')]"
         },
         "retentionInDays": "[parameters('logAnalyticsRetentionInDays')]"
-      }
-    },
-    {
-      "name": "PodFailedPhase",
-      "type": "microsoft.insights/scheduledQueryRules",
-      "apiVersion": "2018-04-16",
-      "location": "[parameters('location')]",
-      "dependsOn": [
-        "[resourceId('Microsoft.OperationsManagement/solutions',variables('containerInsightsSolutionName'))]"
-      ],
-      "properties": {
-        "description": "Alert on pod Failed phase.",
-        "enabled": "true",
-        "source": {
-          "query": "[concat('//https://docs.microsoft.com/azure/azure-monitor/insights/container-insights-alerts \r\n let endDateTime = now(); let startDateTime = ago(1h); let trendBinSize = 1m; let clusterName = \"',parameters('aksClusterName'),'\"; KubePodInventory | where TimeGenerated < endDateTime | where TimeGenerated >= startDateTime | where ClusterName == clusterName | distinct ClusterName, TimeGenerated | summarize ClusterSnapshotCount = count() by bin(TimeGenerated, trendBinSize), ClusterName | join hint.strategy=broadcast ( KubePodInventory | where TimeGenerated < endDateTime | where TimeGenerated >= startDateTime | distinct ClusterName, Computer, PodUid, TimeGenerated, PodStatus | summarize TotalCount = count(), PendingCount = sumif(1, PodStatus =~ \"Pending\"), RunningCount = sumif(1, PodStatus =~ \"Running\"), SucceededCount = sumif(1, PodStatus =~ \"Succeeded\"), FailedCount = sumif(1, PodStatus =~ \"Failed\") by ClusterName, bin(TimeGenerated, trendBinSize) ) on ClusterName, TimeGenerated | extend UnknownCount = TotalCount - PendingCount - RunningCount - SucceededCount - FailedCount | project TimeGenerated, TotalCount = todouble(TotalCount) / ClusterSnapshotCount, PendingCount = todouble(PendingCount) / ClusterSnapshotCount, RunningCount = todouble(RunningCount) / ClusterSnapshotCount, SucceededCount = todouble(SucceededCount) / ClusterSnapshotCount, FailedCount = todouble(FailedCount) / ClusterSnapshotCount, UnknownCount = todouble(UnknownCount) / ClusterSnapshotCount| summarize AggregatedValue = avg(FailedCount) by bin(TimeGenerated, trendBinSize)')]",
-          "dataSourceId": "[resourceId('Microsoft.OperationalInsights/workspaces', parameters('logAnalyticsWorkspaceName'))]",
-          "queryType": "ResultCount"
-        },
-        "schedule": {
-          "frequencyInMinutes": 5,
-          "timeWindowInMinutes": 10
-        },
-        "action": {
-          "odata.type": "Microsoft.WindowsAzure.Management.Monitoring.Alerts.Models.Microsoft.AppInsights.Nexus.DataContracts.Resources.ScheduledQueryRules.AlertingAction",
-          "severity": "3",
-          "trigger": {
-            "thresholdOperator": "GreaterThan",
-            "threshold": "3",
-            "metricTrigger": {
-              "thresholdOperator": "GreaterThan",
-              "threshold": "2",
-              "metricTriggerType": "Consecutive"
-            }
-          }
-        }
       }
     },
     {

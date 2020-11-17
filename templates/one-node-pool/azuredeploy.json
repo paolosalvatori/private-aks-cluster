@@ -676,7 +676,7 @@
       }
     },
     {
-      "apiVersion": "2019-12-01",
+      "apiVersion": "2020-06-01",
       "type": "Microsoft.Compute/virtualMachines",
       "name": "[parameters('vmName')]",
       "location": "[parameters('location')]",
@@ -742,7 +742,7 @@
       }
     },
     {
-      "apiVersion": "2019-12-01",
+      "apiVersion": "2020-06-01",
       "type": "Microsoft.Compute/virtualMachines/extensions",
       "name": "[concat(parameters('vmName'),'/', variables('omsAgentForLinuxName'))]",
       "location": "[parameters('location')]",
@@ -764,7 +764,7 @@
       }
     },
     {
-      "apiVersion": "2019-12-01",
+      "apiVersion": "2020-06-01",
       "type": "Microsoft.Compute/virtualMachines/extensions",
       "name": "[concat(parameters('vmName'),'/', variables('omsDependencyAgentForLinuxName'))]",
       "location": "[parameters('location')]",
@@ -939,7 +939,7 @@
     },
     {
       "type": "Microsoft.OperationalInsights/workspaces",
-      "apiVersion": "2015-11-01-preview",
+      "apiVersion": "2020-08-01",
       "name": "[parameters('logAnalyticsWorkspaceName')]",
       "location": "[parameters('location')]",
       "properties": {
