@@ -1100,5 +1100,11 @@
         ]
       }
     }
-  ]
+  ],
+  "outputs": {
+    "privateFQDN": {
+      "type": "string",
+      "value": "[reference(parameters('aksClusterName')).privateFQDN]"
+    }
+  }
 }
