@@ -1162,7 +1162,7 @@
       ],
       "properties": {
         "roleDefinitionId": "[variables('acrPullRoleId')]",
-        "principalId": "[reference(variables('aksClusterId'), '2020-09-01', 'Full').properties.identityProfile.kubeletidentity.clientId]",
+        "principalId": "[reference(variables('aksClusterId'), '2020-09-01', 'Full').properties.identityProfile.kubeletidentity.objectId]",
         "scope": "[resourceGroup().id]",
         "principalType": "ServicePrincipal"
       }
