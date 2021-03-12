@@ -856,23 +856,40 @@
       "type": "Microsoft.Network/networkSecurityGroups",
       "name": "[variables('vmSubnetNsgName')]",
       "location": "[parameters('location')]",
-      "properties": {
-        "securityRules": [
-          {
-            "name": "AllowSshInbound",
-            "properties": {
-              "priority": 100,
-              "access": "Allow",
-              "direction": "Inbound",
-              "destinationPortRange": "22",
-              "protocol": "Tcp",
-              "sourceAddressPrefix": "*",
-              "sourcePortRange": "*",
-              "destinationAddressPrefix": "*"
-            }
+      "resources": [
+        {
+          "type": "providers/diagnosticSettings",
+          "apiVersion": "2017-05-01-preview",
+          "name": "Microsoft.Insights/default",
+          "location": "[parameters('location')]",
+          "dependsOn": [
+            "[variables('vmSubnetNsgId')]",
+            "[variables('workspaceId')]"
+          ],
+          "properties": {
+            "workspaceId": "[variables('workspaceId')]",
+            "metrics": [],
+            "logs": [
+              {
+                "category": "NetworkSecurityGroupEvent",
+                "enabled": true,
+                "retentionPolicy": {
+                  "enabled": false,
+                  "days": 0
+                }
+              },
+              {
+                "category": "NetworkSecurityGroupRuleCounter",
+                "enabled": true,
+                "retentionPolicy": {
+                  "enabled": false,
+                  "days": 0
+                }
+              }
+            ]
           }
-        ]
-      }
+        }
+      ]
     },
     {
       "type": "Microsoft.Network/virtualNetworks",
