@@ -794,8 +794,8 @@
     "acrPublicDNSZoneForwarder": "[if(equals(toLower(environment().name), 'azureusgovernment'), 'azurecr.us', 'azurecr.io')]",
     "acrPrivateDnsZoneName": "[concat('privatelink.', variables('acrPublicDNSZoneForwarder'))]",
     "acrPrivateDnsZoneId": "[resourceId('Microsoft.Network/privateDnsZones', variables('acrPrivateDnsZoneName'))]",
-    "acrStorageAccountPrivateEndpointGroupName": "registry",
-    "acrPrivateDnsZoneGroup": "[concat(parameters('acrPrivateEndpointName'),'/', variables('acrStorageAccountPrivateEndpointGroupName'), 'PrivateDnsZoneGroup')]",
+    "acrPrivateEndpointGroupName": "registry",
+    "acrPrivateDnsZoneGroup": "[concat(parameters('acrPrivateEndpointName'),'/', variables('acrPrivateEndpointGroupName'), 'PrivateDnsZoneGroup')]",
     "acrPrivateEndpointId": "[resourceId('Microsoft.Network/privateEndpoints', parameters('acrPrivateEndpointName'))]",
     "acrId": "[resourceId('Microsoft.ContainerRegistry/registries', parameters('acrName'))]",
     "aksClusterId": "[resourceId('Microsoft.ContainerService/managedClusters', parameters('aksClusterName'))]"
@@ -1541,7 +1541,7 @@
             "properties": {
               "privateLinkServiceId": "[variables('acrId')]",
               "groupIds": [
-                "[variables('acrStorageAccountPrivateEndpointGroupName')]"
+                "[variables('acrPrivateEndpointGroupName')]"
               ]
             }
           }
