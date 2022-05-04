@@ -12,19 +12,22 @@
       "value": "10.244.0.0/16"
     },
     "aksClusterServiceCidr": {
-      "value": "10.2.0.0/16"
+      "value": "172.16.0.0/16"
     },
     "aksClusterDnsServiceIP": {
-      "value": "10.2.0.10"
+      "value": "172.16.0.10"
     },
     "aksClusterDockerBridgeCidr": {
       "value": "172.17.0.1/16"
     },
+    "aksClusterOutboundType": {
+      "value": "loadBalancer"
+    },
     "aksClusterKubernetesVersion": {
-      "value": "1.19.3"
+      "value": "1.22.6"
     },
     "aksClusterAdminUsername": {
-      "value": "azureuser"
+      "value": "azadmin"
     },
     "aksClusterSshPublicKey": {
       "value": "<YOUR-SSH-KEY>"

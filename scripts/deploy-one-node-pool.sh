@@ -93,7 +93,7 @@ echo "Checking if ["$aksResourceGroup"] resource group actually exists in the ["
 
 az group show --name $aksResourceGroup &>/dev/null
 
-if [[ $? != 0 ]]; then
+if [[ $? = 0 ]]; then
     echo "No ["$aksResourceGroup"] resource group actually exists in the ["$subscriptionId"] subscription"
     echo "Creating ["$aksResourceGroup"] resource group in the ["$subscriptionId"] subscription..."
 

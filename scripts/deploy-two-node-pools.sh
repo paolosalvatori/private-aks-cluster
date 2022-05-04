@@ -3,7 +3,7 @@
 # Variables
 
 # AKS cluster name
-aksPrefix="<YOUR-PREFIX->"
+aksPrefix="Baialagar"
 aksName="${aksPrefix}Aks"
 validateTemplate=1
 useWhatIf=0
