@@ -74,7 +74,7 @@ if [[ $ok == 1 ]]; then
 fi
 
 # Get the last Kubernetes version available in the region
-kubernetesVersion=$(az aks get-versions --location $location --query orchestrators[-1].orchestratorVersion --output tsv)
+kubernetesVersion=$(az aks get-versions --location $location --query "orchestrators[?isPreview==false].orchestratorVersion | sort(@) | [-1]" --output tsv)
 
 if [[ -n $kubernetesVersion ]]; then
     echo "Successfully retrieved the last Kubernetes version [$kubernetesVersion] supported by AKS in [$location] Azure region"
@@ -286,30 +286,30 @@ else
     exit
 fi
 
-# Assign Azure Kubernetes Service RBAC Admin role to the current user
-echo "Checking if [$userPrincipalName] user has been assigned to [Azure Kubernetes Service RBAC Admin] role on the [$aksName] AKS cluster..."
+# Assign Azure Kubernetes Service RBAC Cluster Admin role to the current user
+echo "Checking if [$userPrincipalName] user has been assigned to [Azure Kubernetes Service RBAC Cluster Admin] role on the [$aksName] AKS cluster..."
 role=$(az role assignment list \
     --assignee $userObjectId \
     --scope $aksClusterId \
     --query [?roleDefinitionName].roleDefinitionName \
     --output tsv 2>/dev/null)
 
-if [[ $role == "Owner" ]] || [[ $role == "Contributor" ]] || [[ $role == "Azure Kubernetes Service RBAC Admin" ]]; then
+if [[ $role == "Owner" ]] || [[ $role == "Contributor" ]] || [[ $role == "Azure Kubernetes Service RBAC Cluster Admin" ]]; then
     echo "[$userPrincipalName] user is already assigned to the [$role] role on the [$aksName] AKS cluster"
 else
-    echo "[$userPrincipalName] user is not assigned to the [Azure Kubernetes Service RBAC Admin] role on the [$aksName] AKS cluster"
-    echo "Assigning the [$userPrincipalName] user to the [Azure Kubernetes Service RBAC Admin] role on the [$aksName] AKS cluster..."
+    echo "[$userPrincipalName] user is not assigned to the [Azure Kubernetes Service RBAC Cluster Admin] role on the [$aksName] AKS cluster"
+    echo "Assigning the [$userPrincipalName] user to the [Azure Kubernetes Service RBAC Cluster Admin] role on the [$aksName] AKS cluster..."
 
     az role assignment create \
-        --role "Azure Kubernetes Service RBAC Admin" \
+        --role "Azure Kubernetes Service RBAC Cluster Admin" \
         --assignee $userObjectId \
         --scope $aksClusterId \
         --only-show-errors 1>/dev/null
 
     if [[ $? == 0 ]]; then
-        echo "[$userPrincipalName] user successfully assigned to the [Azure Kubernetes Service RBAC Admin] role on the [$aksName] AKS cluster"
+        echo "[$userPrincipalName] user successfully assigned to the [Azure Kubernetes Service RBAC Cluster Admin] role on the [$aksName] AKS cluster"
     else
-        echo "Failed to assign the [$userPrincipalName] user to the [Azure Kubernetes Service RBAC Admin] role on the [$aksName] AKS cluster"
+        echo "Failed to assign the [$userPrincipalName] user to the [Azure Kubernetes Service RBAC Cluster Admin] role on the [$aksName] AKS cluster"
         exit
     fi
 fi

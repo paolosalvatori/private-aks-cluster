@@ -79,7 +79,7 @@ if [[ $ok == 1 ]]; then
 fi
 
 # Get the last Kubernetes version available in the region
-kubernetesVersion=$(az aks get-versions --location $location --query orchestrators[-1].orchestratorVersion --output tsv)
+kubernetesVersion=$(az aks get-versions --location $location --query "orchestrators[?isPreview==false].orchestratorVersion | sort(@) | [-1]" --output tsv)
 
 if [[ -n $kubernetesVersion ]]; then
     echo "Successfully retrieved the last Kubernetes version ["$kubernetesVersion"] supported by AKS in ["$location"] Azure region"
