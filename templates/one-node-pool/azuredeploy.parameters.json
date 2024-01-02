@@ -83,10 +83,10 @@
       "value": "Canonical"
     },
     "imageOffer": {
-      "value": "UbuntuServer"
+      "value": "0001-com-ubuntu-server-jammy"
     },
     "imageSku": {
-      "value": "18.04-LTS"
+      "value": "22_04-lts-gen2"
     },
     "authenticationType": {
       "value": "password"

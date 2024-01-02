@@ -17,7 +17,7 @@ aksResourceGroupName="${aksPrefix}RG"
 location="WestEurope"
 
 # Name and resource group name of the Azure Container Registry used by the AKS cluster.
-# The name of the cluster is also used to create or select an existing admin group in the Azure AD tenant.
+# The name of the cluster is also used to create or select an existing admin group in the Microsoft Entra ID tenant.
 acrName="${aksPrefix}Acr"
 acrResourceGroupName="$aksResourceGroupName"
 acrSku="Standard"
@@ -251,17 +251,17 @@ else
 fi
 
 # Get the user principal name of the current user
-echo "Retrieving the user principal name of the current user from the [$tenantId] Azure AD tenant..."
+echo "Retrieving the user principal name of the current user from the [$tenantId] Microsoft Entra ID tenant..."
 userPrincipalName=$(az account show --query user.name --output tsv)
 if [[ -n $userPrincipalName ]]; then
-    echo "[$userPrincipalName] user principal name successfully retrieved from the [$tenantId] Azure AD tenant"
+    echo "[$userPrincipalName] user principal name successfully retrieved from the [$tenantId] Microsoft Entra ID tenant"
 else
-    echo "Failed to retrieve the user principal name of the current user from the [$tenantId] Azure AD tenant"
+    echo "Failed to retrieve the user principal name of the current user from the [$tenantId] Microsoft Entra ID tenant"
     exit
 fi
 
-# Retrieve the objectId of the user in the Azure AD tenant used by AKS for user authentication
-echo "Retrieving the objectId of the [$userPrincipalName] user principal name from the [$tenantId] Azure AD tenant..."
+# Retrieve the objectId of the user in the Microsoft Entra ID tenant used by AKS for user authentication
+echo "Retrieving the objectId of the [$userPrincipalName] user principal name from the [$tenantId] Microsoft Entra ID tenant..."
 userObjectId=$(az ad user show --upn-or-object-id $userPrincipalName --query objectId --output tsv 2>/dev/null)
 
 if [[ -n $userObjectId ]]; then

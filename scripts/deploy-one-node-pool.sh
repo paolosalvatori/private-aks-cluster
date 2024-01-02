@@ -14,7 +14,7 @@ aksResourceGroup="<AKS resource group name>"
 location="<Region>"
 
 # Name and resource group name of the Azure Container Registry used by the AKS cluster.
-# The name of the cluster is also used to create or select an existing admin group in the Azure AD tenant.
+# The name of the cluster is also used to create or select an existing admin group in the Microsoft Entra ID tenant.
 acrName="<ACR name>"
 acrResourceGroup="<ACR resource group name>"
 acrSku="Basic"

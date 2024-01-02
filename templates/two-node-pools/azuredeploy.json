@@ -141,7 +141,7 @@
       "defaultValue": "[subscription().tenantId]",
       "type": "string",
       "metadata": {
-        "description": "Specifies the tenant id of the Azure Active Directory used by the AKS cluster for authentication."
+        "description": "Specifies the tenant id of the Microsoft Entra ID used by the AKS cluster for authentication."
       }
     },
     "aadProfileAdminGroupObjectIDs": {
@@ -591,14 +591,14 @@
     },
     "imageOffer": {
       "type": "string",
-      "defaultValue": "UbuntuServer",
+      "defaultValue": "0001-com-ubuntu-server-jammy",
       "metadata": {
         "description": "Specifies the offer of the platform image or marketplace image used to create the virtual machine."
       }
     },
     "imageSku": {
       "type": "string",
-      "defaultValue": "18.04-LTS",
+      "defaultValue": "22_04-lts-gen2",
       "metadata": {
         "description": "Specifies the Ubuntu version for the VM. This will pick a fully patched image of this given Ubuntu version."
       }
